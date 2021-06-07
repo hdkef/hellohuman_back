@@ -16,7 +16,7 @@ func addUserICE(user *models.User, ICE *interface{}) {
 	for _, v := range rooms[user.RoomID] {
 		if v.ID == user.ID {
 			v.ICE = append(v.ICE, ICE)
-			return
+			break
 		}
 	}
 }
@@ -30,7 +30,7 @@ func sendUserICE(user *models.User, ICE *interface{}) {
 	for _, v := range rooms[user.RoomID] {
 		if v.Conn != user.Conn {
 			v.Conn.WriteJSON(resp)
-			return
+			break
 		}
 	}
 }
