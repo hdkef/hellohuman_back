@@ -2,7 +2,12 @@ package controller
 
 import (
 	"database/sql"
+	"encoding/json"
+	"hellohuman/models"
+	"hellohuman/utils"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 //LoginHandle is a struct contains all data needed for login handler
@@ -18,6 +23,25 @@ func NewLoginHandler(db *sql.DB) *LoginHandle {
 //Login will handle login request
 func (x *LoginHandle) Login() http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
-		res.Write([]byte("Login"))
+
+		var loginpayload models.LoginPayload
+
+		err := json.NewDecoder(req.Body).Decode(&loginpayload)
+		if err != nil {
+			utils.ResErr(&res, http.StatusInternalServerError, err)
+			return
+		}
+
+		loginresponse := models.LoginResponse{
+			ID:     uuid.New().String(),
+			Name:   loginpayload.Name,
+			Gender: loginpayload.Gender,
+		}
+
+		err = json.NewEncoder(res).Encode(&loginresponse)
+		if err != nil {
+			utils.ResErr(&res, http.StatusInternalServerError, err)
+			return
+		}
 	}
 }

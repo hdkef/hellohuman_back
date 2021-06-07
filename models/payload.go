@@ -7,3 +7,9 @@ type WSPayload struct {
 	Conn *websocket.Conn
 	Type string
 }
+
+//LoginPayload is how login request's body data formatted
+type LoginPayload struct {
+	Name   string
+	Gender string
+}
