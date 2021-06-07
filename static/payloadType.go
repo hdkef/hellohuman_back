@@ -1,5 +1,7 @@
 package static
 
 const (
-	InitFromClient = "initFromClient"
+	InitFromClient        = "initFromClient"
+	CreatedRoomFromServer = "createdRoomFromServer"
+	JoinedRoomFromServer  = "joinedRoomFromServer"
 )

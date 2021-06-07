@@ -21,6 +21,9 @@ func NewRoomHandler(db *sql.DB) *RoomHandle {
 	return &RoomHandle{DB: db}
 }
 
+//store the user info to map, to access this need RoomID
+var rooms map[string][]*models.User = make(map[string][]*models.User)
+
 //upgrader to upgrade http protocol to websocket
 var upgrader *websocket.Upgrader = &websocket.Upgrader{
 	CheckOrigin: func(req *http.Request) bool {
@@ -48,9 +51,8 @@ func (x *RoomHandle) EstablishWS() http.HandlerFunc {
 //payloadReader will create one goroutine that read all incoming payload, append a ws pointer, and give it to payloadChan
 func payloadReader(cancel context.CancelFunc, ws *websocket.Conn, DB *sql.DB, payloadChan chan models.WSPayload) {
 
-	var payload models.WSPayload = models.WSPayload{
-		Conn: ws,
-	}
+	var payload models.WSPayload
+	payload.User.Conn = ws
 
 	defer cancel()
 
@@ -77,16 +79,4 @@ func payloadRouter(ctx context.Context, payloadChan chan models.WSPayload) {
 			}
 		}
 	}
-}
-
-//initFromClient handle when the client send payload 'initFromClient' which is the first thing after conn is established
-func initFromClient(payload models.WSPayload) {
-
-	//Here code to response initFromClient
-
-}
-
-//pingPonger will create one goroutine that ping the client, and when the connection is lost. It deletes all related to client's online trace (ID)
-func pingPonger() {
-
 }

@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"hellohuman/models"
 	"hellohuman/utils"
 	"net/http"
@@ -32,12 +33,18 @@ func (x *LoginHandle) Login() http.HandlerFunc {
 			return
 		}
 
-		loginresponse := models.LoginResponse{
-			ID:     uuid.New().String(),
-			Name:   loginpayload.Name,
-			Gender: loginpayload.Gender,
+		if roomCount := len(rooms); roomCount >= 1000 {
+			utils.ResErr(&res, http.StatusInternalServerError, errors.New("too many rooms"))
+			return
 		}
 
+		loginresponse := models.LoginResponse{
+			User: models.User{
+				ID:     "user" + uuid.New().String(),
+				Name:   loginpayload.User.Name,
+				Gender: loginpayload.User.Gender,
+			},
+		}
 		err = json.NewEncoder(res).Encode(&loginresponse)
 		if err != nil {
 			utils.ResErr(&res, http.StatusInternalServerError, err)
