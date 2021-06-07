@@ -8,4 +8,6 @@ type User struct {
 	Conn   *websocket.Conn
 	Name   string
 	Gender string
+	SDP    interface{}
+	ICE    []interface{}
 }

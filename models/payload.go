@@ -4,6 +4,8 @@ package models
 type WSPayload struct {
 	Type string
 	User User
+	SDP  interface{}
+	ICE  interface{}
 }
 
 //LoginPayload is how login request's body data formatted

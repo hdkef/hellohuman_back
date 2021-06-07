@@ -13,16 +13,16 @@ func initFromClient(payload models.WSPayload) {
 	//Here code to response initFromClient
 	empty := isRoomsEmpty()
 	if empty == true {
-		go createRoom(payload.User)
+		go createRoom(&payload.User)
 		return
 	}
 	roomID := isRoomAvail()
 	if roomID == "" {
-		go createRoom(payload.User)
+		go createRoom(&payload.User)
 		return
 	}
 
-	go joinRoom(payload.User, roomID)
+	go joinRoom(&payload.User, &roomID)
 }
 
 //isRoomsEmpty return true if the rooms map empty
@@ -41,29 +41,29 @@ func isRoomAvail() string {
 }
 
 //createRoom will add new room and add user's info and respond roomID
-func createRoom(user models.User) {
+func createRoom(user *models.User) {
 	roomID := "room" + uuid.New().String()
-	rooms[roomID] = []*models.User{&user}
+	rooms[roomID] = []*models.User{user}
 	resp := models.RoomResponse{
 		Type:   static.CreatedRoomFromServer,
 		RoomID: roomID,
 	}
-	go pingPonger(user, roomID)
+	go pingPonger(user, &roomID)
 	user.Conn.WriteJSON(resp)
 }
 
 //joinRoom will append new ws to roomID and respond roomID
-func joinRoom(user models.User, roomID string) {
-	rooms[roomID] = append(rooms[roomID], &user)
+func joinRoom(user *models.User, roomID *string) {
+	rooms[*roomID] = append(rooms[*roomID], user)
 	resp := models.RoomResponse{
 		Type:   static.JoinedRoomFromServer,
-		RoomID: roomID,
+		RoomID: *roomID,
 	}
 	go pingPonger(user, roomID)
 	user.Conn.WriteJSON(resp)
 }
 
 //pingPonger will create one goroutine that ping the client, and when the connection is lost. It deletes all related to client's online trace (ID)
-func pingPonger(user models.User, roomID string) {
+func pingPonger(user *models.User, roomID *string) {
 
 }

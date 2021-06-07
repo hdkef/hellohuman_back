@@ -10,3 +10,8 @@ type RoomResponse struct {
 	Type   string
 	RoomID string
 }
+
+type ICEResponse struct {
+	Type string
+	ICE  interface{}
+}

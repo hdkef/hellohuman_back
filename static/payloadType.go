@@ -1,7 +1,11 @@
 package static
 
 const (
-	InitFromClient        = "initFromClient"
-	CreatedRoomFromServer = "createdRoomFromServer"
-	JoinedRoomFromServer  = "joinedRoomFromServer"
+	InitFromClient        = "InitFromClient"
+	CreatedRoomFromServer = "CreatedRoomFromServer"
+	JoinedRoomFromServer  = "JoinedRoomFromServer"
+	OfferFromClient       = "OfferFromClient"
+	AnswerFromClient      = "AnswerFromClient"
+	ICEFromClient         = "ICEFromClient"
+	ICEFromServer         = "ICEFromServer"
 )

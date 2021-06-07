@@ -75,7 +75,13 @@ func payloadRouter(ctx context.Context, payloadChan chan models.WSPayload) {
 		case payload := <-payloadChan:
 			switch payload.Type {
 			case static.InitFromClient:
-				initFromClient(payload)
+				go initFromClient(payload)
+			case static.OfferFromClient:
+				go offerFromClient(payload)
+			case static.AnswerFromClient:
+				go answerFromClient(payload)
+			case static.ICEFromClient:
+				go ICEFromClient(payload)
 			}
 		}
 	}
