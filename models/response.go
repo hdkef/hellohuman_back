@@ -11,7 +11,14 @@ type RoomResponse struct {
 	RoomID string
 }
 
+//ICEResponse format ICEFromServer response
 type ICEResponse struct {
 	Type string
 	ICE  interface{}
+}
+
+//OfferAnswerResponse format answerfromserver or offerfromserver
+type OfferAnswerResponse struct {
+	Type string
+	SDP  interface{}
 }

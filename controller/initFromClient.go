@@ -3,6 +3,8 @@ package controller
 import (
 	"hellohuman/models"
 	"hellohuman/static"
+
+	"github.com/google/uuid"
 )
 
 //initFromClient handle when the client send payload 'initFromClient' which is the first thing after conn is established
@@ -40,7 +42,7 @@ func isRoomAvail() string {
 
 //createRoom will add new room and add user's info and respond roomID
 func createRoom(user *models.User) {
-	roomID := "room" //+ uuid.New().String()
+	roomID := "room" + uuid.New().String()
 	rooms[roomID] = []*models.User{user}
 	resp := models.RoomResponse{
 		Type:   static.CreatedRoomFromServer,
