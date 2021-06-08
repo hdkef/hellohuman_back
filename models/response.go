@@ -9,6 +9,7 @@ type LoginResponse struct {
 type RoomResponse struct {
 	Type   string
 	RoomID string
+	SDP    interface{}
 }
 
 //ICEResponse format ICEFromServer response
@@ -17,8 +18,8 @@ type ICEResponse struct {
 	ICE  interface{}
 }
 
-//OfferAnswerResponse format answerfromserver or offerfromserver
-type OfferAnswerResponse struct {
+//AnswerResponse format answerfromserver
+type AnswerResponse struct {
 	Type string
 	SDP  interface{}
 }

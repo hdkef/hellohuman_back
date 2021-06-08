@@ -55,9 +55,17 @@ func createRoom(user *models.User) {
 //joinRoom will append new ws to roomID and respond roomID
 func joinRoom(user *models.User, roomID *string) {
 	rooms[*roomID] = append(rooms[*roomID], user)
+	var offer interface{}
+	for _, v := range rooms[*roomID] {
+		if v.Conn != user.Conn {
+			offer = v.SDP
+			break
+		}
+	}
 	resp := models.RoomResponse{
 		Type:   static.JoinedRoomFromServer,
 		RoomID: *roomID,
+		SDP:    offer,
 	}
 	go pingPonger(user, roomID)
 	user.Conn.WriteJSON(resp)
