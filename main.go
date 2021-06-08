@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hellohuman/controller"
 	"hellohuman/static"
+	"hellohuman/utils"
 	"net/http"
 	"os"
 
@@ -26,7 +27,7 @@ func main() {
 	room := controller.NewRoomHandler(&sql.DB{})
 
 	router := mux.NewRouter()
-	router.HandleFunc(static.LoginRoute, login.Login())
+	router.HandleFunc(static.LoginRoute, utils.Cors(login.Login()))
 	router.HandleFunc(static.EstablishWSRoute, room.EstablishWS())
 
 	addr := fmt.Sprintf(":%s", os.Getenv("PORT"))
