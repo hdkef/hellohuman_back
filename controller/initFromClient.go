@@ -78,7 +78,7 @@ func joinRoom(user *models.User, roomID *string) {
 }
 
 const (
-	pongWait   = 30 * time.Second
+	pongWait   = 5 * time.Second
 	pingPeriod = (pongWait * 9) / 10
 )
 
@@ -106,6 +106,7 @@ func pingPonger(user *models.User, roomID *string) {
 		for _, v := range rooms[*roomID] { //if the room is 2 person, only delete user that disconnected
 			if v.Conn != user.Conn {
 				deletedUsers = append(deletedUsers, v)
+				go tellPeerMeDisconnect(v.Conn)
 				break
 			}
 		}
@@ -122,4 +123,12 @@ func pingPonger(user *models.User, roomID *string) {
 			}
 		}
 	}
+}
+
+//tellPeerMeDisconnect will send to peer client that user disconnected
+func tellPeerMeDisconnect(ws *websocket.Conn) {
+	resp := models.DisconnectResponse{
+		Type: static.PeerDisconnected,
+	}
+	ws.WriteJSON(resp)
 }

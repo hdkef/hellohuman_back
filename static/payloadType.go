@@ -9,4 +9,5 @@ const (
 	AnswerFromServer      = "AnswerFromServer"
 	ICEFromClient         = "ICEFromClient"
 	ICEFromServer         = "ICEFromServer"
+	PeerDisconnected      = "PeerDisconnected"
 )

@@ -25,3 +25,8 @@ type AnswerResponse struct {
 	SDP  interface{}
 	Peer User
 }
+
+//DisconnectResponse how data when user disconnected and want to tell peer formatted
+type DisconnectResponse struct {
+	Type string
+}
