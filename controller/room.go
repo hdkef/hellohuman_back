@@ -24,6 +24,9 @@ func NewRoomHandler(db *sql.DB) *RoomHandle {
 //store the user info to map, to access this need RoomID
 var rooms map[string][]*models.User = make(map[string][]*models.User)
 
+//store user when online to transmit chat text
+var onlineMap map[string]*websocket.Conn = make(map[string]*websocket.Conn)
+
 //upgrader to upgrade http protocol to websocket
 var upgrader *websocket.Upgrader = &websocket.Upgrader{
 	CheckOrigin: func(req *http.Request) bool {
@@ -82,6 +85,8 @@ func payloadRouter(ctx context.Context, payloadChan chan models.WSPayload) {
 				go answerFromClient(payload)
 			case static.ICEFromClient:
 				go ICEFromClient(payload)
+			case static.ChatFromClient:
+				go chatFromClient(payload)
 			}
 		}
 	}

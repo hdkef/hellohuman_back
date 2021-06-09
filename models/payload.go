@@ -6,6 +6,8 @@ type WSPayload struct {
 	User User
 	SDP  interface{}
 	ICE  interface{}
+	Text string
+	Peer User
 }
 
 //LoginPayload is how login request's body data formatted

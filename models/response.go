@@ -30,3 +30,12 @@ type AnswerResponse struct {
 type DisconnectResponse struct {
 	Type string
 }
+
+//ChatResponse how chat data is formatted
+type ChatResponse struct {
+	Name   string
+	Gender string
+	Type   string
+	Text   string
+	Date   string
+}

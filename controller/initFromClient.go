@@ -47,6 +47,7 @@ func isRoomAvail() string {
 func createRoom(user *models.User) {
 	roomID := "room" + uuid.New().String()
 	rooms[roomID] = []*models.User{user}
+	onlineMap[user.ID] = user.Conn
 	resp := models.RoomResponse{
 		Type:   static.CreatedRoomFromServer,
 		RoomID: roomID,
@@ -59,6 +60,7 @@ func createRoom(user *models.User) {
 //joinRoom will append new ws to roomID and give offer and peer info
 func joinRoom(user *models.User, roomID *string) {
 	rooms[*roomID] = append(rooms[*roomID], user)
+	onlineMap[user.ID] = user.Conn
 	var peer models.User
 	for _, v := range rooms[*roomID] {
 		if v.Conn != user.Conn {
@@ -95,6 +97,11 @@ func pingPonger(user *models.User, roomID *string) {
 
 	defer func(user *models.User) {
 		timer.Stop()
+
+		if _, exist := onlineMap[user.ID]; exist == true {
+			delete(onlineMap, user.ID)
+			fmt.Println("delete onlineMap ", onlineMap)
+		}
 
 		if len(rooms[*roomID]) == 1 {
 			delete(rooms, *roomID) //if the room is only 1 person, delete the map

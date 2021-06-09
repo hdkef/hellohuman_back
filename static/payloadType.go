@@ -10,4 +10,7 @@ const (
 	ICEFromClient         = "ICEFromClient"
 	ICEFromServer         = "ICEFromServer"
 	PeerDisconnected      = "PeerDisconnected"
+	ChatFromClient        = "ChatFromClient"
+	ChatFromPeer          = "ChatFromPeer"
+	ChatFromMe            = "ChatFromMe"
 )
