@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"hellohuman/models"
 	"hellohuman/static"
 	"time"
@@ -54,17 +53,16 @@ func createRoom(user *models.User) {
 	}
 	go pingPonger(user, &roomID)
 	user.Conn.WriteJSON(resp)
-	fmt.Println("rooms ", rooms, len(rooms[roomID]))
 }
 
 //joinRoom will append new ws to roomID and give offer and peer info
 func joinRoom(user *models.User, roomID *string) {
 	rooms[*roomID] = append(rooms[*roomID], user)
 	onlineMap[user.ID] = user.Conn
-	var peer models.User
+	var peer *models.User
 	for _, v := range rooms[*roomID] {
 		if v.Conn != user.Conn {
-			peer = *v
+			peer = v
 			break
 		}
 	}
@@ -72,11 +70,10 @@ func joinRoom(user *models.User, roomID *string) {
 		Type:   static.JoinedRoomFromServer,
 		RoomID: *roomID,
 		SDP:    peer.SDP,
-		Peer:   peer,
+		Peer:   *peer,
 	}
 	go pingPonger(user, roomID)
 	user.Conn.WriteJSON(resp)
-	fmt.Println("rooms ", rooms, len(rooms[*roomID]))
 }
 
 const (
@@ -100,12 +97,10 @@ func pingPonger(user *models.User, roomID *string) {
 
 		if _, exist := onlineMap[user.ID]; exist == true {
 			delete(onlineMap, user.ID)
-			fmt.Println("delete onlineMap ", onlineMap)
 		}
 
 		if len(rooms[*roomID]) == 1 {
 			delete(rooms, *roomID) //if the room is only 1 person, delete the map
-			fmt.Println("delete room ", rooms)
 			return
 		}
 
@@ -118,14 +113,12 @@ func pingPonger(user *models.User, roomID *string) {
 			}
 		}
 		rooms[*roomID] = deletedUsers
-		fmt.Println("delete user ", rooms)
 	}(user)
 
 	for {
 		select {
 		case <-timer.C:
 			if err := user.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				fmt.Println("P")
 				return
 			}
 		}
