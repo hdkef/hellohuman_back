@@ -12,11 +12,12 @@ func answerFromClient(payload models.WSPayload) {
 	go sendStoredICE(&payload.User)
 }
 
-//sendOffer will try to send answer to caller client
+//sendAnswer will give answer to caller client and peerinfo
 func sendAnswer(user *models.User, SDP *interface{}) {
 	resp := models.AnswerResponse{
 		Type: static.AnswerFromServer,
 		SDP:  SDP,
+		Peer: *user,
 	}
 	for _, v := range rooms[user.RoomID] {
 		if v.Conn != user.Conn {

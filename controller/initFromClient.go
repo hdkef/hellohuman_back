@@ -1,10 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"hellohuman/models"
 	"hellohuman/static"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/websocket"
 )
 
 //initFromClient handle when the client send payload 'initFromClient' which is the first thing after conn is established
@@ -50,28 +53,73 @@ func createRoom(user *models.User) {
 	}
 	go pingPonger(user, &roomID)
 	user.Conn.WriteJSON(resp)
+	fmt.Println("rooms ", rooms, len(rooms[roomID]))
 }
 
-//joinRoom will append new ws to roomID and respond roomID
+//joinRoom will append new ws to roomID and give offer and peer info
 func joinRoom(user *models.User, roomID *string) {
 	rooms[*roomID] = append(rooms[*roomID], user)
-	var offer interface{}
+	var peer models.User
 	for _, v := range rooms[*roomID] {
 		if v.Conn != user.Conn {
-			offer = v.SDP
+			peer = *v
 			break
 		}
 	}
 	resp := models.RoomResponse{
 		Type:   static.JoinedRoomFromServer,
 		RoomID: *roomID,
-		SDP:    offer,
+		SDP:    peer.SDP,
+		Peer:   peer,
 	}
 	go pingPonger(user, roomID)
 	user.Conn.WriteJSON(resp)
+	fmt.Println("rooms ", rooms, len(rooms[*roomID]))
 }
 
-//pingPonger will create one goroutine that ping the client, and when the connection is lost. It deletes all related to client's online trace (ID)
-func pingPonger(user *models.User, roomID *string) {
+const (
+	pongWait   = 30 * time.Second
+	pingPeriod = (pongWait * 9) / 10
+)
 
+//pingPonger will create one goroutine that ping the client, and when the connection is lost. It deletes all related to client's online trace (ID)
+//roomID comes directly from roomID not from user.RoomID because InitFromClient doesn't bring room
+//User.RoomID only available in offerFromClient and answerFromClient
+func pingPonger(user *models.User, roomID *string) {
+	user.Conn.SetPongHandler(func(appData string) error {
+		user.Conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+
+	timer := time.NewTicker(pingPeriod)
+
+	defer func(user *models.User) {
+		timer.Stop()
+
+		if len(rooms[*roomID]) == 1 {
+			delete(rooms, *roomID) //if the room is only 1 person, delete the map
+			fmt.Println("delete room ", rooms)
+			return
+		}
+
+		deletedUsers := []*models.User{}
+		for _, v := range rooms[*roomID] { //if the room is 2 person, only delete user that disconnected
+			if v.Conn != user.Conn {
+				deletedUsers = append(deletedUsers, v)
+				break
+			}
+		}
+		rooms[*roomID] = deletedUsers
+		fmt.Println("delete user ", rooms)
+	}(user)
+
+	for {
+		select {
+		case <-timer.C:
+			if err := user.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				fmt.Println("P")
+				return
+			}
+		}
+	}
 }

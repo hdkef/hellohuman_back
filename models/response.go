@@ -10,6 +10,7 @@ type RoomResponse struct {
 	Type   string
 	RoomID string
 	SDP    interface{}
+	Peer   User
 }
 
 //ICEResponse format ICEFromServer response
@@ -22,4 +23,5 @@ type ICEResponse struct {
 type AnswerResponse struct {
 	Type string
 	SDP  interface{}
+	Peer User
 }
