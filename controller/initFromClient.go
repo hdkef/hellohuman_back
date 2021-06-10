@@ -18,7 +18,7 @@ func initFromClient(payload models.WSPayload) {
 		go createRoom(&payload.User)
 		return
 	}
-	roomID := isRoomAvail()
+	roomID := isRoomAvail(payload.User.ID)
 	if roomID == "" {
 		go createRoom(&payload.User)
 		return
@@ -33,9 +33,9 @@ func isRoomsEmpty() bool {
 }
 
 //isRoomAvail return roomID if the room is available or return "" if full
-func isRoomAvail() string {
+func isRoomAvail(id string) string {
 	for s, v := range rooms {
-		if len(v) == 1 {
+		if len(v) == 1 && v[0].ID != id { //handling if user left then join will not join to his old room
 			return s
 		}
 	}
