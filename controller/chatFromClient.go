@@ -27,7 +27,7 @@ func chatFromClient(payload models.WSPayload) {
 //chatFromMe the chat itself will be sent back to client to know whether the chat is succeed or not
 func chatFromMe(payload *models.WSPayload) {
 	resp := models.ChatResponse{
-		Type:   static.ChatFromPeer,
+		Type:   static.ChatFromMe,
 		Name:   payload.User.Name,
 		Gender: payload.User.Name,
 		Text:   payload.Text,
