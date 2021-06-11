@@ -3,6 +3,7 @@ module hellohuman
 go 1.16
 
 require (
+	github.com/NYTimes/gziphandler v1.1.1
 	github.com/google/uuid v1.2.0 // direct
 	github.com/gorilla/mux v1.8.0 // direct
 	github.com/gorilla/websocket v1.4.2 // direct
